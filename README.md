@@ -1,20 +1,22 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/zjSXGKeR)
-# Our Great Package
+# Wind Turbine Classes
 
-Team: [ADD TEXT HERE!]
+This package provides classes for modeling wind turbine power output based on wind speed.
 
-## Overview
+## Classes
 
-[ADD TEXT HERE!]
+- `GeneralWindTurbine`: A theoretical model using the cubic power curve equation
+- `WindTurbine`: A data-driven model using actual power curve data and interpolation
 
-## Quick-start guide
+## Features
 
-[ADD TEXT HERE!]
+- Calculate power output for any wind speed
+- Compare theoretical and actual power curves
+- Support for both scalar and array inputs
+- Visualization of power curves
 
-## Architecture
+## Installation
 
-[ADD TEXT HERE!]
+To install this package in development mode:
 
-## Peer review
-
-[ADD TEXT HERE!]
+```bash
+pip install -e .
