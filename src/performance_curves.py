@@ -2,230 +2,97 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def plot_performance_curves(v0_array, power_curve, thrust_curve, power_ref=None, thrust_ref=None, figsize=(12, 8)):
-    """
-    Plot the power and thrust curves.
-    
-    Parameters:
-    -----------
-    v0_array : array
-        Wind speeds [m/s]
-    power_curve : array
-        Power values [kW]
-    thrust_curve : array
-        Thrust values [kN]
-    power_ref : array, optional
-        Reference power values for comparison [kW]
-    thrust_ref : array, optional
-        Reference thrust values for comparison [kN]
-    figsize : tuple, optional
-        Figure size
-        
-    Returns:
-    --------
-    fig : matplotlib figure
-        The figure with power and thrust curves
-    """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
-    
-    # Plot power curve
+
     ax1.plot(v0_array, power_curve, 'b-', linewidth=2, label='BEM Prediction')
     if power_ref is not None:
         ax1.plot(v0_array, power_ref, 'r--', linewidth=2, label='Reference')
-    
     ax1.set_xlabel('Wind Speed [m/s]')
     ax1.set_ylabel('Power [kW]')
     ax1.set_title('Power Curve')
     ax1.grid(True, linestyle='--', alpha=0.7)
     ax1.legend()
-    
-    # Plot thrust curve
+
     ax2.plot(v0_array, thrust_curve, 'g-', linewidth=2, label='BEM Prediction')
     if thrust_ref is not None:
         ax2.plot(v0_array, thrust_ref, 'r--', linewidth=2, label='Reference')
-    
     ax2.set_xlabel('Wind Speed [m/s]')
     ax2.set_ylabel('Thrust [kN]')
     ax2.set_title('Thrust Curve')
     ax2.grid(True, linestyle='--', alpha=0.7)
     ax2.legend()
-    
+
     plt.tight_layout()
     return fig
 
 def plot_cp_ct_surfaces(pitch_grid, tsr_grid, cp_surface, ct_surface, figsize=(14, 6)):
-    """
-    Plot the power coefficient (Cp) and thrust coefficient (Ct) surfaces.
-    
-    Parameters:
-    -----------
-    pitch_grid : 2D array
-        Pitch angles for the surface [deg]
-    tsr_grid : 2D array
-        Tip speed ratios for the surface
-    cp_surface : 2D array
-        Power coefficient surface
-    ct_surface : 2D array
-        Thrust coefficient surface
-    figsize : tuple, optional
-        Figure size
-        
-    Returns:
-    --------
-    fig : matplotlib figure
-        The figure with Cp and Ct surfaces
-    """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
-    
-    # Plot Cp surface
+
     cp_levels = np.linspace(0, np.max(cp_surface), 20)
     cp_contour = ax1.contourf(pitch_grid, tsr_grid, cp_surface, levels=cp_levels, cmap='viridis')
-    
     ax1.set_xlabel('Pitch Angle [deg]')
     ax1.set_ylabel('Tip Speed Ratio [-]')
     ax1.set_title('Power Coefficient (Cp)')
     fig.colorbar(cp_contour, ax=ax1, label='Cp [-]')
-    
-    # Plot Ct surface
+
     ct_levels = np.linspace(0, np.max(ct_surface), 20)
     ct_contour = ax2.contourf(pitch_grid, tsr_grid, ct_surface, levels=ct_levels, cmap='plasma')
-    
     ax2.set_xlabel('Pitch Angle [deg]')
     ax2.set_ylabel('Tip Speed Ratio [-]')
     ax2.set_title('Thrust Coefficient (Ct)')
     fig.colorbar(ct_contour, ax=ax2, label='Ct [-]')
-    
+
     plt.tight_layout()
     return fig
 
 def plot_spanwise_variables(r, a, a_prime, v0, rpm, figsize=(10, 8)):
-    """
-    Plot spanwise distribution of induction factors and other variables.
-    
-    Parameters:
-    -----------
-    r : array
-        Blade span positions [m]
-    a : array
-        Axial induction factors
-    a_prime : array
-        Tangential induction factors
-    v0 : float
-        Wind speed [m/s]
-    rpm : float
-        Rotor speed [rpm]
-    figsize : tuple, optional
-        Figure size
-        
-    Returns:
-    --------
-    fig : matplotlib figure
-        The figure with spanwise distributions
-    """
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figsize)
-    
-    # Plot axial induction factor
+
     ax1.plot(r, a, 'b-', linewidth=2)
     ax1.set_xlabel('Blade Span [m]')
     ax1.set_ylabel('Axial Induction Factor (a)')
     ax1.set_title(f'Spanwise Axial Induction Distribution (V0={v0} m/s, RPM={rpm})')
     ax1.grid(True, linestyle='--', alpha=0.7)
     ax1.set_xlim([r.min(), r.max()])
-    
-    # Plot tangential induction factor
+
     ax2.plot(r, a_prime, 'r-', linewidth=2)
     ax2.set_xlabel('Blade Span [m]')
-    ax2.set_ylabel('Tangential Induction Factor (a\')')
+    ax2.set_ylabel("Tangential Induction Factor (a')")
     ax2.set_title(f'Spanwise Tangential Induction Distribution (V0={v0} m/s, RPM={rpm})')
     ax2.grid(True, linestyle='--', alpha=0.7)
     ax2.set_xlim([r.min(), r.max()])
-    
+
     plt.tight_layout()
     return fig
 
 def plot_spanwise_forces(r, dT, dM, v0, rpm, figsize=(10, 8)):
-    """
-    Plot spanwise distribution of thrust and torque.
-    
-    Parameters:
-    -----------
-    r : array
-        Blade span positions [m]
-    dT : array
-        Differential thrust [N/m]
-    dM : array
-        Differential torque [Nm/m]
-    v0 : float
-        Wind speed [m/s]
-    rpm : float
-        Rotor speed [rpm]
-    figsize : tuple, optional
-        Figure size
-        
-    Returns:
-    --------
-    fig : matplotlib figure
-        The figure with spanwise force distributions
-    """
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figsize)
-    
-    # Plot differential thrust
+
     ax1.plot(r, dT, 'b-', linewidth=2)
     ax1.set_xlabel('Blade Span [m]')
     ax1.set_ylabel('dT/dr [N/m]')
     ax1.set_title(f'Spanwise Thrust Distribution (V0={v0} m/s, RPM={rpm})')
     ax1.grid(True, linestyle='--', alpha=0.7)
     ax1.set_xlim([r.min(), r.max()])
-    
-    # Plot differential torque
+
     ax2.plot(r, dM, 'r-', linewidth=2)
     ax2.set_xlabel('Blade Span [m]')
     ax2.set_ylabel('dM/dr [Nm/m]')
     ax2.set_title(f'Spanwise Torque Distribution (V0={v0} m/s, RPM={rpm})')
     ax2.grid(True, linestyle='--', alpha=0.7)
     ax2.set_xlim([r.min(), r.max()])
-    
+
     plt.tight_layout()
     return fig
 
 def calculate_aep(v0_array, power_curve, wind_dist, rated_power=15000):
-    """
-    Calculate Annual Energy Production (AEP) based on power curve and wind distribution.
-    
-    Parameters:
-    -----------
-    v0_array : array
-        Wind speeds [m/s]
-    power_curve : array
-        Power values [kW]
-    wind_dist : array
-        Wind speed distribution (probability density) [-]
-    rated_power : float, optional
-        Rated power [kW]
-        
-    Returns:
-    --------
-    aep : float
-        Annual Energy Production [GWh]
-    cf : float
-        Capacity factor [-]
-    """
-    # Make sure wind_dist is normalized
     wind_dist = wind_dist / np.sum(wind_dist)
-    
-    # Calculate power produced at each wind speed
-    power_produced = np.array(power_curve) * wind_dist * 8760  # 8760 hours in a year
-    
-    # Sum to get total annual energy production
-    aep = np.sum(power_produced) / 1000  # Convert MWh to GWh
-    
-    # Calculate capacity factor
-    cf = aep / (rated_power * 8.760)  # 8.760 = 8760/1000 for GWh
-    
+    power_produced = np.array(power_curve) * wind_dist * 8760
+    aep = np.sum(power_produced) / 1000  # GWh
+    cf = aep / (rated_power * 8.760)
     return aep, cf
 
-
 def plot_operational_strategy(v0_array, pitch_array, rpm_array):
-    import matplotlib.pyplot as plt
     fig, ax1 = plt.subplots()
     ax1.plot(v0_array, pitch_array, 'b-', label="Pitch angle (θₚ)")
     ax1.set_xlabel("Wind speed (m/s)")
@@ -238,9 +105,9 @@ def plot_operational_strategy(v0_array, pitch_array, rpm_array):
     plt.title("Optimal Operational Strategy")
     fig.tight_layout()
     plt.grid(True)
+    return fig  # fixed
 
 def plot_cl_cd_vs_alpha(polar_database, af_id_example):
-    import matplotlib.pyplot as plt
     alpha, cl, cd = polar_database[af_id_example]
     plt.figure()
     plt.plot(alpha, cl, label="Cl")
@@ -250,3 +117,4 @@ def plot_cl_cd_vs_alpha(polar_database, af_id_example):
     plt.title(f"Cl and Cd vs α (Airfoil #{af_id_example})")
     plt.legend()
     plt.grid(True)
+    return plt.gcf()  # fixed
