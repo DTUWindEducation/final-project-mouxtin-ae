@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 def plot_performance_curves(v0_array, power_curve, thrust_curve, power_ref=None, thrust_ref=None, figsize=(12, 8)):
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
@@ -105,16 +106,36 @@ def plot_operational_strategy(v0_array, pitch_array, rpm_array):
     plt.title("Optimal Operational Strategy")
     fig.tight_layout()
     plt.grid(True)
-    return fig  # fixed
+    return fig
 
 def plot_cl_cd_vs_alpha(polar_database, af_id_example):
     alpha, cl, cd = polar_database[af_id_example]
-    plt.figure()
-    plt.plot(alpha, cl, label="Cl")
-    plt.plot(alpha, cd, label="Cd")
+    fig, ax = plt.subplots()
+    ax.plot(alpha, cl, label="Cl")
+    ax.plot(alpha, cd, label="Cd")
+    ax.set_xlabel("Angle of attack (°)")
+    ax.set_ylabel("Coefficient")
+    ax.set_title(f"Cl and Cd vs α (Airfoil #{af_id_example})")
+    ax.legend()
+    ax.grid(True)
+    return fig
+
+def plot_cl_cd_vs_alpha_all(polar_database, output_dir):
+    import matplotlib.pyplot as plt
+    os.makedirs(output_dir, exist_ok=True)
+
+    plt.figure(figsize=(10, 6))
+    for af_id, (alpha, cl, cd) in polar_database.items():
+        if len(alpha) == len(cl):
+            plt.plot(alpha, cl, label=f"Cl-{af_id:02d}", alpha=0.7)
+        if len(alpha) == len(cd):
+            plt.plot(alpha, cd, label=f"Cd-{af_id:02d}", linestyle='--', alpha=0.7)
+
     plt.xlabel("Angle of attack (°)")
     plt.ylabel("Coefficient")
-    plt.title(f"Cl and Cd vs α (Airfoil #{af_id_example})")
-    plt.legend()
+    plt.title("Cl and Cd vs α for All Airfoils")
     plt.grid(True)
-    return plt.gcf()  # fixed
+    plt.legend(fontsize='x-small', ncol=2)
+    plt.tight_layout()
+    plt.savefig(os.path.join(output_dir, "cl_cd_vs_alpha_all.jpg"), dpi=300)
+    plt.close()

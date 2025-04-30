@@ -42,7 +42,6 @@ def load_coords(filepath):
 def plot_polar_data(base_path, output_dir, polar_pattern="IEA-15-240-RWT_AeroDyn15_Polar_{:02d}.dat", start=0, end=50):
     os.makedirs(output_dir, exist_ok=True)
 
-    # Cl vs AoA
     plt.figure(figsize=(10, 6))
     for i in range(start, end):
         file_path = os.path.join(base_path, "Airfoils", polar_pattern.format(i))
@@ -50,7 +49,7 @@ def plot_polar_data(base_path, output_dir, polar_pattern="IEA-15-240-RWT_AeroDyn
             aoa, cl, _, _ = load_airfoil_data(file_path)
             if len(aoa) == len(cl):
                 plt.plot(aoa, cl, label=f"{i:02d}")
-    plt.xlabel("Angle of Attack (\u00b0)")
+    plt.xlabel("Angle of Attack (°)")
     plt.ylabel("Lift Coefficient (Cl)")
     plt.title("Cl vs AoA")
     plt.legend(fontsize='small', ncol=2)
@@ -59,7 +58,6 @@ def plot_polar_data(base_path, output_dir, polar_pattern="IEA-15-240-RWT_AeroDyn
     plt.savefig(os.path.join(output_dir, "cl_vs_aoa.jpg"), dpi=300)
     plt.close()
 
-    # Cd vs AoA
     plt.figure(figsize=(10, 6))
     for i in range(start, end):
         file_path = os.path.join(base_path, "Airfoils", polar_pattern.format(i))
@@ -67,7 +65,7 @@ def plot_polar_data(base_path, output_dir, polar_pattern="IEA-15-240-RWT_AeroDyn
             aoa, _, cd, _ = load_airfoil_data(file_path)
             if len(aoa) == len(cd):
                 plt.plot(aoa, cd, label=f"{i:02d}")
-    plt.xlabel("Angle of Attack (\u00b0)")
+    plt.xlabel("Angle of Attack (°)")
     plt.ylabel("Drag Coefficient (Cd)")
     plt.title("Cd vs AoA")
     plt.legend(fontsize='small', ncol=2)
@@ -76,7 +74,6 @@ def plot_polar_data(base_path, output_dir, polar_pattern="IEA-15-240-RWT_AeroDyn
     plt.savefig(os.path.join(output_dir, "cd_vs_aoa.jpg"), dpi=300)
     plt.close()
 
-    # Cm vs AoA
     plt.figure(figsize=(10, 6))
     for i in range(start, end):
         file_path = os.path.join(base_path, "Airfoils", polar_pattern.format(i))
@@ -84,7 +81,7 @@ def plot_polar_data(base_path, output_dir, polar_pattern="IEA-15-240-RWT_AeroDyn
             aoa, _, _, cm = load_airfoil_data(file_path)
             if len(aoa) == len(cm) and all(m is not None for m in cm):
                 plt.plot(aoa, cm, label=f"{i:02d}")
-    plt.xlabel("Angle of Attack (\u00b0)")
+    plt.xlabel("Angle of Attack (°)")
     plt.ylabel("Moment Coefficient (Cm)")
     plt.title("Cm vs AoA")
     plt.legend(fontsize='small', ncol=2)

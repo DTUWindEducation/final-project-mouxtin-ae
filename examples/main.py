@@ -1,3 +1,4 @@
+
 import sys
 import os
 import matplotlib.pyplot as plt
@@ -12,8 +13,8 @@ from src.performance_curves import (
     plot_operational_strategy,
     plot_cl_cd_vs_alpha
 )
-from plots import plot_coords_data, plot_polar_data
-
+from src.plots import plot_coords_data, plot_polar_data
+from src.performance_curves import plot_cl_cd_vs_alpha_all
 def main():
     base_path = os.path.join("inputs", "IEA-15-240-RWT")
     blade_file = os.path.join(base_path, "IEA-15-240-RWT_AeroDyn15_blade.dat")
@@ -22,7 +23,7 @@ def main():
     output_dir = "outputs"
     os.makedirs(output_dir, exist_ok=True)
 
-    print("📊 Generating airfoil shape and polar plots...")
+    print("\U0001F4CA Generating airfoil shape and polar plots...")
     plot_coords_data(base_path, output_dir, start=0, end=50)
     plot_polar_data(base_path, output_dir, start=0, end=50)
 
@@ -30,16 +31,13 @@ def main():
     polar_database = load_airfoil_polars(polar_folder)
     v0_array, pitch_array, rpm_array, power_ref, thrust_ref = load_operational_strategy(operational_file)
 
-    fig3 = plot_cl_cd_vs_alpha(polar_database, af_id_example=10)
-    fig3.savefig(os.path.join(output_dir, "cl_cd_vs_alpha_af10.jpg"), dpi=300, bbox_inches="tight")
+    plot_cl_cd_vs_alpha_all(polar_database, output_dir)
 
     fig4 = plot_operational_strategy(v0_array, pitch_array, rpm_array)
     fig4.savefig(os.path.join(output_dir, "operational_strategy.jpg"), dpi=300, bbox_inches="tight")
 
     v0_array, power_curve, thrust_curve, torque_curve = compute_power_thrust_curves(
-        (r, c, beta, af_id),
-        (v0_array, pitch_array, rpm_array),
-        polar_database
+        (r, c, beta, af_id), (v0_array, pitch_array, rpm_array), polar_database
     )
 
     fig5 = plot_performance_curves(v0_array, power_curve, thrust_curve, power_ref, thrust_ref)
@@ -63,7 +61,7 @@ def main():
     fig6 = plot_spanwise_variables(r, a, a_prime, v0_array[case_idx], rpm_array[case_idx])
     fig6.savefig(os.path.join(output_dir, "spanwise_induction.jpg"), dpi=300, bbox_inches="tight")
 
-    print("✅ All figures saved in 'outputs/' as .jpg")
+    print("\u2705 All figures saved in 'outputs/' as .jpg")
 
 if __name__ == "__main__":
     main()
