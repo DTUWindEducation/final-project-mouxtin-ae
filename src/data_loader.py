@@ -1,7 +1,9 @@
 """
 Data loading utilities for wind turbine BEM analysis.
+
 Provides functions to load blade geometry, airfoil data, and operational strategy.
 """
+
 import os
 import glob
 import numpy as np
@@ -19,20 +21,17 @@ def load_blade_geometry(filepath):
     Returns:
     --------
     tuple
-        (r, c, beta, af_id) where:
-        r : array - Blade span positions [m]
-        c : array - Chord lengths at each span position [m]
-        beta : array - Twist angles at each span position [deg]
-        af_id : array - Airfoil index at each span position
+        (r, c, beta, af_id) arrays for:
+        r : blade span positions [m]
+        c : chord lengths [m]
+        beta : twist angles [deg]
+        af_id : airfoil indices
     """
-    # Skip the header lines
     data = np.loadtxt(filepath, skiprows=8)
-
-    r = data[:, 0]     # Blade span [m]
-    c = data[:, 5]     # Chord [m]
-    beta = data[:, 4]  # Twist angle [deg]
-    af_id = data[:, 6].astype(int)  # Airfoil index
-
+    r = data[:, 0]
+    c = data[:, 5]
+    beta = data[:, 4]
+    af_id = data[:, 6].astype(int)
     return r, c, beta, af_id
 
 
@@ -43,120 +42,113 @@ def load_airfoil_polars(airfoil_folder):
     Parameters:
     -----------
     airfoil_folder : str
-        Folder containing the airfoil polar files
+        Path to folder with airfoil polar files
 
     Returns:
     --------
     dict
-        Dictionary where keys are airfoil indices, values are (alpha, Cl, Cd) arrays
+        Keys are airfoil indices, values are (alpha, Cl, Cd) arrays
     """
     polar_database = {}
-    
-    # Find all polar files in the folder
     polar_files = glob.glob(os.path.join(airfoil_folder, "*Polar*.dat"))
-    
+
     for filepath in polar_files:
-        # Extract the airfoil index from the filename
         filename = os.path.basename(filepath)
-        af_idx_str = filename.split("_")[-1].split(".")[0]
-        af_idx = int(af_idx_str) + 1  # Convert to 1-based index to match BlAFID
-        
-        # Read file manually
-        with open(filepath, 'r', encoding='utf-8') as file:
+        try:
+            af_idx_str = filename.split("_")[-1].split(".")[0]
+            af_idx = int(af_idx_str) + 1
+        except (IndexError, ValueError):
+            continue
+
+        with open(filepath, encoding="utf-8") as file:
             lines = file.readlines()
-        
-        # Skip header lines and find the aerodynamic coefficients table
+
         data_lines = []
         in_table = False
         for line in lines:
             if "!    Alpha      Cl      Cd" in line:
                 in_table = True
                 continue
-            if in_table and not line.strip().startswith('!'):
+            if in_table and not line.strip().startswith("!"):
                 data_lines.append(line)
-        
-        # Parse the data
-        data = np.loadtxt(data_lines)
-        alpha = data[:, 0]  # Angle of attack [deg]
-        cl = data[:, 1]     # Lift coefficient
-        cd = data[:, 2]     # Drag coefficient
-        
-        polar_database[af_idx] = (alpha, cl, cd)
-    
+
+        try:
+            data = np.loadtxt(data_lines)
+            alpha, cl, cd = data[:, 0], data[:, 1], data[:, 2]
+            polar_database[af_idx] = (alpha, cl, cd)
+        except (ValueError, IndexError):
+            continue
+
     return polar_database
 
 
 def load_airfoil_coordinates(airfoil_folder):
     """
     Load all airfoil coordinate files into a dictionary.
-    
+
     Parameters:
     -----------
     airfoil_folder : str
-        Folder containing the airfoil coordinate files
-    
+        Path to folder with coordinate files
+
     Returns:
     --------
     dict
-        Dictionary where keys are airfoil indices, values are (x, y) coordinate arrays
+        Keys are airfoil indices, values are (x, y) coordinate arrays
     """
     coords_database = {}
-    
-    # Find all coordinate files in the folder
     coord_files = glob.glob(os.path.join(airfoil_folder, "*Coords*.txt"))
-    
+
     for filepath in coord_files:
-        # Extract the airfoil index from the filename
         filename = os.path.basename(filepath)
-        # Extract the number between "AF" and "_Coords"
-        af_idx_str = filename.split("_AF")[1].split("_")[0]
-        af_idx = int(af_idx_str) + 1  # Convert to 1-based index to match BlAFID
-        
-        # Skip header lines and find coordinates
-        with open(filepath, 'r', encoding='utf-8') as file:
+        try:
+            af_idx_str = filename.split("_AF")[1].split("_")[0]
+            af_idx = int(af_idx_str) + 1
+        except (IndexError, ValueError):
+            continue
+
+        with open(filepath, encoding="utf-8") as file:
             lines = file.readlines()
-        
-        # Skip to the actual coordinates
-        data_lines = []
+
+        coord_start = None
         for i, line in enumerate(lines):
-            if "!  x/c        y/c" in line and i > 10:  # Skip reference point
+            if "!  x/c        y/c" in line and i > 10:
                 coord_start = i + 1
                 break
-        
-        # Parse coordinate data
-        data = np.loadtxt(lines[coord_start:])
-        x = data[:, 0]  # Normalized x-coordinate
-        y = data[:, 1]  # Normalized y-coordinate
-        
-        coords_database[af_idx] = (x, y)
-    
+
+        if coord_start is not None:
+            try:
+                data = np.loadtxt(lines[coord_start:])
+                x, y = data[:, 0], data[:, 1]
+                coords_database[af_idx] = (x, y)
+            except (ValueError, IndexError):
+                continue
+
     return coords_database
 
 
 def load_operational_strategy(filepath):
     """
-    Load wind speed, pitch angle, and RPM from operational file.
-    
+    Load wind speed, pitch, rpm, power and thrust data.
+
     Parameters:
     -----------
     filepath : str
         Path to the operational strategy file
-    
+
     Returns:
     --------
     tuple
-        (v0, pitch, rpm, power, thrust) where:
-        v0 : array - Wind speed [m/s]
-        pitch : array - Blade pitch angle [deg]
-        rpm : array - Rotational speed [rpm]
-        power : array - Power [kW]
-        thrust : array - Thrust [kN]
+        v0 : array - wind speeds [m/s]
+        pitch : array - pitch angles [deg]
+        rpm : array - rotational speeds [rpm]
+        power : array - power output [kW]
+        thrust : array - thrust force [kN]
     """
     data = np.loadtxt(filepath, skiprows=1)
-    v0 = data[:, 0]    # Wind speed [m/s]
-    pitch = data[:, 1] # Blade pitch angle [deg]
-    rpm = data[:, 2]   # Rotational speed [rpm]
-    power = data[:, 3] # Power [kW]
-    thrust = data[:, 4] # Thrust [kN]
-    
+    v0 = data[:, 0]
+    pitch = data[:, 1]
+    rpm = data[:, 2]
+    power = data[:, 3]
+    thrust = data[:, 4]
     return v0, pitch, rpm, power, thrust
