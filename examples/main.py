@@ -1,6 +1,6 @@
-
-import sys
+"""Main execution script for wind turbine BEM model analysis."""
 import os
+import sys
 import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -11,10 +11,10 @@ from src.performance_curves import (
     plot_performance_curves,
     plot_spanwise_variables,
     plot_operational_strategy,
-    plot_cl_cd_vs_alpha
+    plot_cl_cd_vs_alpha_all
 )
 from src.plots import plot_coords_data, plot_polar_data
-from src.performance_curves import plot_cl_cd_vs_alpha_all
+
 def main():
     base_path = os.path.join("inputs", "IEA-15-240-RWT")
     blade_file = os.path.join(base_path, "IEA-15-240-RWT_AeroDyn15_blade.dat")
@@ -23,7 +23,6 @@ def main():
     output_dir = "outputs"
     os.makedirs(output_dir, exist_ok=True)
 
-    print("\U0001F4CA Generating airfoil shape and polar plots...")
     plot_coords_data(base_path, output_dir, start=0, end=50)
     plot_polar_data(base_path, output_dir, start=0, end=50)
 
@@ -33,15 +32,17 @@ def main():
 
     plot_cl_cd_vs_alpha_all(polar_database, output_dir)
 
-    fig4 = plot_operational_strategy(v0_array, pitch_array, rpm_array)
-    fig4.savefig(os.path.join(output_dir, "operational_strategy.jpg"), dpi=300, bbox_inches="tight")
+    fig_strategy = plot_operational_strategy(v0_array, pitch_array, rpm_array)
+    fig_strategy.savefig(os.path.join(output_dir, "operational_strategy.jpg"), dpi=300, bbox_inches="tight")
 
-    v0_array, power_curve, thrust_curve, torque_curve = compute_power_thrust_curves(
-        (r, c, beta, af_id), (v0_array, pitch_array, rpm_array), polar_database
+    v0_array, power_curve, thrust_curve, _ = compute_power_thrust_curves(
+        (r, c, beta, af_id),
+        (v0_array, pitch_array, rpm_array),
+        polar_database
     )
 
-    fig5 = plot_performance_curves(v0_array, power_curve, thrust_curve, power_ref, thrust_ref)
-    fig5.savefig(os.path.join(output_dir, "power_thrust_curves.jpg"), dpi=300, bbox_inches="tight")
+    fig_perf = plot_performance_curves(v0_array, power_curve, thrust_curve, power_ref, thrust_ref)
+    fig_perf.savefig(os.path.join(output_dir, "power_thrust_curves.jpg"), dpi=300, bbox_inches="tight")
 
     case_idx = 10
     T, M, P, a, a_prime = solve_bem(
@@ -52,16 +53,16 @@ def main():
         polar_database
     )
 
-    print("=== Turbine performance at selected wind speed ===")
+    print("=== Turbine performance ===")
     print(f"Wind speed: {v0_array[case_idx]:.2f} m/s")
     print(f"Thrust: {T:.2f} N")
     print(f"Torque: {M:.2f} Nm")
     print(f"Power: {P / 1000:.2f} kW")
 
-    fig6 = plot_spanwise_variables(r, a, a_prime, v0_array[case_idx], rpm_array[case_idx])
-    fig6.savefig(os.path.join(output_dir, "spanwise_induction.jpg"), dpi=300, bbox_inches="tight")
+    fig_span = plot_spanwise_variables(r, a, a_prime, v0_array[case_idx], rpm_array[case_idx])
+    fig_span.savefig(os.path.join(output_dir, "spanwise_induction.jpg"), dpi=300, bbox_inches="tight")
 
-    print("\u2705 All figures saved in 'outputs/' as .jpg")
+    print("All figures saved in 'outputs/'")
 
 if __name__ == "__main__":
     main()

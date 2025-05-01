@@ -1,13 +1,35 @@
+"""
+Tools for working with airfoil data in wind turbine BEM analysis.
+Provides functions for interpolation and visualization of airfoil data.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 def interpolate_airfoil_coefficients(alpha_data, cl_data, cd_data, alpha_query):
     """
     Interpolates Cl and Cd for a given angle of attack alpha_query.
+    
+    Parameters:
+    -----------
+    alpha_data : array
+        Array of angle of attack values [deg]
+    cl_data : array
+        Array of lift coefficient values
+    cd_data : array
+        Array of drag coefficient values
+    alpha_query : float
+        Angle of attack to interpolate for [deg]
+        
+    Returns:
+    --------
+    tuple
+        (cl, cd) - Interpolated lift and drag coefficients
     """
     cl = np.interp(alpha_query, alpha_data, cl_data)
     cd = np.interp(alpha_query, alpha_data, cd_data)
     return cl, cd
+
 
 def plot_airfoil_shapes(coords_database, num_airfoils=None, figsize=(12, 10)):
     """
@@ -60,6 +82,7 @@ def plot_airfoil_shapes(coords_database, num_airfoils=None, figsize=(12, 10)):
     
     plt.tight_layout()
     return fig
+
 
 def plot_airfoil_polars(polar_database, airfoil_indices=None, figsize=(14, 8)):
     """
