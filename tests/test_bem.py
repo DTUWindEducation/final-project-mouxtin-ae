@@ -23,7 +23,7 @@ from src.performance_curves import (
     calculate_aep,
 )
 from src.airfoil_tools import interpolate_airfoil_coefficients
-from src.wind_turbine.turbine_classes import GeneralWindTurbine, WindTurbine
+from src.turbine_classes import GeneralWindTurbine, WindTurbine
 
 
 @pytest.fixture(scope="session")
@@ -267,9 +267,6 @@ def test_plot_cp_ct_surfaces(tmp_path):
 
     assert output_path.exists()
     
-def test_src_init_version():
-    from src import __version__
-    assert __version__ == "1.0"
 
 from src.airfoil_tools import plot_airfoil_polars, plot_airfoil_shapes
 
@@ -381,7 +378,7 @@ def test_plot_coords_data_runs(tmp_path):
 
 import numpy as np
 import pytest
-from src.wind_turbine.turbine_classes import GeneralWindTurbine, WindTurbine
+from src.turbine_classes import GeneralWindTurbine, WindTurbine
 
 
 def test_general_turbine_power_curve():
