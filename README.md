@@ -56,6 +56,7 @@ pip install -r requirements.txt
 ```sh
 python -m venv .venv
 ```
+Do not forget to switch to this beautiful new enviroment
 ```sh
 source .venv/Scripts/activate # GitBash
 ```
@@ -73,6 +74,7 @@ pip install --upgrade pip
 ```sh
 pip install -e .[dev]
 ```
+Sit back, relax and wait for approximately 1 minute, no need to worry, in my village they say ''The good thing, takes time''.
    
 
 ### **4. Run the package**
