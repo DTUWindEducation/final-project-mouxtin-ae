@@ -1,35 +1,85 @@
 # Wind Turbine Modeling Using Blade‑Element‑Momentum (BEM) Theory
 
-This repository implements a steady‑state Blade‑Element‑Momentum (BEM) model to predict the aerodynamic performance of the IEA 15 MW offshore reference wind turbine. It computes power, thrust, and torque as functions of wind speed, rotor speed, and blade pitch.
+# **Team**: Mouxtin A.E
+
+## **Overview**
+This repository implements a steady‑state Blade‑Element‑Momentum (BEM) model to predict the aerodynamic performance of a reference IEA 15 MW offshore wind turbine. It computes power, thrust, and torque as functions of wind speed, rotor speed, and blade pitch. The model simulates he aerodynamic performance of a horizontal-axis wind turbine. The BEM formulation combines momentum theory and blade element theory to iteratively solve for the axial and tangential induction factors \( a \) and \( a' \), which modify the local inflow velocity experienced by the blade elements.
+
+The aerodynamic forces are computed using lift and drag coefficients $c_l$ and $C_d$, interpolated from airfoil polars as functions of the angle of attack $\alpha$. These are used to calculate the normal and tangential force coefficients:
+
+```math
+C_n = C_l \cos\phi + C_d \sin\phi, \quad
+C_t = C_l \sin\phi - C_d \cos\phi
+```
+
+With these, the induction factors are updated using:
+
+```math
+a = \frac{1}{\left( \frac{4 \sin^2 \phi}{\sigma(r) C_n} + 1 \right)}, \quad
+a' = \frac{1}{\left( \frac{4 \sin \phi \cos \phi}{\sigma(r) C_t} - 1 \right)}
+```
+
+Once convergence is achieved, the distributed loads are integrated over the blade span to yield total thrust \( T \), torque \( M \), and power \( P \):
+
+```math
+P = M \omega, \quad
+C_P = \frac{P}{\frac{1}{2} \rho A V_0^3}, \quad
+C_T = \frac{T}{\frac{1}{2} \rho A V_0^2}
+```
+
+The goal is to provide a computational tool for evaluating performance metrics as functions of inflow wind speed $V_0$, rotor speed $\omega$, and blade pitch angle $\theta_p$, enabling aerodynamic analysis and operational optimization of large-scale wind turbines.
+
 
 ---
 
-## Quick Start
+## **Quick Start Guide**
+To set up and run the simulation, follow these steps:
 
-1. *Clone the repository*
-   bash
-   git clone https://github.com/YourOrg/final-project-mouxtin-ae.git
-   cd final-project-mouxtin-ae
+### **1️. Clone the Repository somewhere**
+```sh
+git clone https://github.com/DTUWindEducation/final-project-mouxtin-ae.git
+```
+```sh
+cd final-project-mouxtin-ae
+```
+Ensure you have Python 3.11+:
+```sh
+python --version
+```
+<!-- ```sh
+conda create -n windsim python=3.11 -y
+conda activate windsim
+pip install -r requirements.txt
+``` -->
+
+### **2. Set Up Virtual Environment (recommended)**
+```sh
+python3 -m venv .venv
+```
+```sh
+source .venv/bin/activate   # Mac/Linux(GitBash)
+```
+```sh
+source .venv/Scripts/activate # Windows Terminal
+```
+```sh
+.\.venv\Scripts\Activate.ps1 # Windows PowerShell
+```
+
+### **3. Install dependencies of the package**
+```sh
+pip install --upgrade pip
+```
+```sh
+pip install -e .[dev]
+```
    
 
-2. *Create and activate a virtual environment* (recommended)
-   bash
-   python3 -m venv .venv
-   source .venv/bin/activate   # Linux/Mac
-   .\.venv\Scripts\activate  # Windows PowerShell
-   
-
-3. *Install dependencies and your package*
-   bash
-   pip install --upgrade pip
-   pip install -e .
-   
-
-4. *Run the demonstration*
-   bash
+### **4. Run the package**
+```sh
    python examples/main.py
-   
-   This will load inputs/, run the BEM solver over the provided operating strategy, and save figures to outputs/.
+```
+   This will load inputs/, run the BEM solver and save figures to outputs/.
 
 ---
 
