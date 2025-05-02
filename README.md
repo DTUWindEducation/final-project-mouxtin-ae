@@ -83,7 +83,7 @@ pip install -e .[dev]
 
 ---
 
-## Project Structure
+## **Project Structure**
 
 ```text
 final-project-mouxtin-ae/
