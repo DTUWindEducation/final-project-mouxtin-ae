@@ -54,13 +54,13 @@ pip install -r requirements.txt
 
 ### **2. Set Up Virtual Environment (recommended)**
 ```sh
-python3 -m venv .venv
+python -m venv .venv
 ```
 ```sh
-source .venv/bin/activate   # Mac/Linux(GitBash)
+source .venv/Scripts/activate # GitBash
 ```
 ```sh
-source .venv/Scripts/activate # Windows Terminal
+source .venv/bin/activate   # Mac/Linux
 ```
 ```sh
 .\.venv\Scripts\Activate.ps1 # Windows PowerShell
