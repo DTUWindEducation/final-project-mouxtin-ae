@@ -7,7 +7,7 @@ Includes:
 """
 
 import numpy as np
-from airfoil_tools import interpolate_airfoil_coefficients
+from piwe_bem_mouxtin_ae.airfoil_tools import interpolate_airfoil_coefficients
 
 def solve_bem(r, c, beta, af_id, v0, pitch, rpm, polar_database):
     """Solve BEM equations for thrust, torque, power, and induction factors."""

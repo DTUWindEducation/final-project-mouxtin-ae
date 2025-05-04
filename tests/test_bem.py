@@ -9,21 +9,21 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-from data_loader import (
+from piwe_bem_mouxtin_ae.data_loader import ( 
     load_blade_geometry,
     load_airfoil_polars,
     load_operational_strategy,
 )
-from bem_solver import solve_bem, compute_power_thrust_curves
-from performance_curves import (
+from piwe_bem_mouxtin_ae.bem_solver import solve_bem, compute_power_thrust_curves
+from piwe_bem_mouxtin_ae.performance_curves import (
     plot_performance_curves,
     plot_operational_strategy,
     plot_cl_cd_vs_alpha,
     plot_spanwise_variables,
     calculate_aep,
 )
-from airfoil_tools import interpolate_airfoil_coefficients
-from turbine_classes import GeneralWindTurbine, WindTurbine
+from piwe_bem_mouxtin_ae.airfoil_tools import interpolate_airfoil_coefficients
+from piwe_bem_mouxtin_ae.turbine_classes import GeneralWindTurbine, WindTurbine
 
 
 @pytest.fixture(scope="session")
@@ -175,8 +175,8 @@ def test_windturbine_interp():
     assert turbine.get_power(10) == 15000
     assert turbine.get_power(2) == 0
 
-from performance_curves import plot_cl_cd_vs_alpha_all, plot_cp_ct_surfaces
-from data_loader import load_airfoil_coordinates
+from piwe_bem_mouxtin_ae.performance_curves import plot_cl_cd_vs_alpha_all, plot_cp_ct_surfaces
+from piwe_bem_mouxtin_ae.data_loader import load_airfoil_coordinates
 
 def test_plot_cl_cd_vs_alpha_all(paths_and_data, tmp_path):
     polar_db = paths_and_data["polar_db"]
@@ -218,7 +218,7 @@ def test_load_airfoil_coordinates(paths_and_data):
 
 def test_load_coords_from_plots_module(tmp_path):
     # minimal dummy test to improve coverage for plots.py load_coords
-    from plots import load_coords
+    from piwe_bem_mouxtin_ae.plots import load_coords
     dummy_file = tmp_path / "AF00_Coords.txt"
     dummy_file.write_text("!  x/c        y/c\n0.0 0.0\n1.0 0.0\n")
     coords = load_coords(str(dummy_file))
@@ -226,7 +226,7 @@ def test_load_coords_from_plots_module(tmp_path):
     assert len(coords[0]) == 2
 
 def test_plot_cp_ct_surface_plot(tmp_path):
-    from performance_curves import plot_cp_ct_surfaces
+    from piwe_bem_mouxtin_ae.performance_curves import plot_cp_ct_surfaces
 
     # Create dummy pitch and TSR grids
     pitch_range = np.linspace(-2, 10, 3)
@@ -248,7 +248,7 @@ def test_plot_cp_ct_surface_plot(tmp_path):
     assert output_file.exists()
 
 def test_plot_cp_ct_surfaces(tmp_path):
-    from performance_curves import plot_cp_ct_surfaces
+    from piwe_bem_mouxtin_ae.performance_curves import plot_cp_ct_surfaces
 
     # Create synthetic input grids and Cp/Ct surfaces
     pitch_range = np.linspace(-2, 10, 3)
@@ -268,7 +268,7 @@ def test_plot_cp_ct_surfaces(tmp_path):
     assert output_path.exists()
     
 
-from airfoil_tools import plot_airfoil_polars, plot_airfoil_shapes
+from piwe_bem_mouxtin_ae.airfoil_tools import plot_airfoil_polars, plot_airfoil_shapes
 
 def test_plot_airfoil_polars(tmp_path, paths_and_data):
     polar_db = paths_and_data["polar_db"]
@@ -299,7 +299,7 @@ def test_plot_airfoil_shapes(tmp_path):
 
 
 def test_solve_bem_extreme_tip_loss(paths_and_data):
-    from bem_solver import solve_bem
+    from piwe_bem_mouxtin_ae.bem_solver import solve_bem
 
     r = paths_and_data["r"]
     c = paths_and_data["c"]
@@ -316,7 +316,7 @@ def test_solve_bem_extreme_tip_loss(paths_and_data):
 
 
 def test_compute_power_thrust_invalid_afid():
-    from bem_solver import compute_power_thrust_curves
+    from piwe_bem_mouxtin_ae.bem_solver import compute_power_thrust_curves
 
     # Airfoil ID missing from polar DB
     r = np.array([1.0, 2.0])
@@ -337,21 +337,21 @@ def test_compute_power_thrust_invalid_afid():
     assert np.allclose(P_curve, 0) or np.any(np.isnan(P_curve))
 
 
-from plots import load_airfoil_data
+from piwe_bem_mouxtin_ae.plots import load_airfoil_data
 
 def test_load_airfoil_data_sample():
     sample = "inputs/IEA-15-240-RWT/Airfoils/IEA-15-240-RWT_AeroDyn15_Polar_00.dat"
     aoa, cl, cd, cm = load_airfoil_data(sample)
     assert len(aoa) == len(cl) == len(cd)
 
-from plots import load_coords
+from piwe_bem_mouxtin_ae.plots import load_coords
 
 def test_load_coords_sample():
     sample = "inputs/IEA-15-240-RWT/Airfoils/IEA-15-240-RWT_AF00_Coords.txt"
     x, y = load_coords(sample)
     assert len(x) == len(y)
 
-from plots import plot_polar_data
+from piwe_bem_mouxtin_ae.plots import plot_polar_data
 
 def test_plot_polar_data_runs(tmp_path):
     plot_polar_data(
@@ -364,7 +364,7 @@ def test_plot_polar_data_runs(tmp_path):
     assert (tmp_path / "cd_vs_aoa.jpg").exists()
     # Cm plot may not exist if cm=None in data
 
-from plots import plot_coords_data
+from piwe_bem_mouxtin_ae.plots import plot_coords_data
 
 def test_plot_coords_data_runs(tmp_path):
     plot_coords_data(
@@ -378,7 +378,7 @@ def test_plot_coords_data_runs(tmp_path):
 
 import numpy as np
 import pytest
-from turbine_classes import GeneralWindTurbine, WindTurbine
+from piwe_bem_mouxtin_ae.turbine_classes import GeneralWindTurbine, WindTurbine
 
 
 def test_general_turbine_power_curve():

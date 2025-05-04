@@ -1,19 +1,17 @@
 """Main execution script for wind turbine BEM model analysis."""
 import os
-import sys
 import matplotlib.pyplot as plt
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from src.data_loader import load_blade_geometry, load_airfoil_polars, load_operational_strategy
-from src.bem_solver import solve_bem, compute_power_thrust_curves
-from src.performance_curves import (
+from piwe_bem_mouxtin_ae.data_loader import load_blade_geometry, load_airfoil_polars, load_operational_strategy
+from piwe_bem_mouxtin_ae.bem_solver import solve_bem, compute_power_thrust_curves
+from piwe_bem_mouxtin_ae.performance_curves import (
     plot_performance_curves,
     plot_spanwise_variables,
     plot_operational_strategy,
     plot_cl_cd_vs_alpha_all
 )
-from src.plots import plot_coords_data, plot_polar_data
+from piwe_bem_mouxtin_ae.plots import plot_coords_data, plot_polar_data
 
 def main():
     base_path = os.path.join("inputs", "IEA-15-240-RWT")
