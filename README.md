@@ -156,6 +156,16 @@ Subclass of `GeneralWindTurbine` that uses actual power-curve data via interpola
 
 - **Tests:** 26 tests executed, all passed. Code coverage is **89%**, exceeding the 80% requirement (`pytest --cov=src tests/`).
 - **Linting:** `pylint src/` reports a score of **9.19/10**, well above the 8.0 threshold.
+
+To verify on your own machine, and you installed in edditable mode with dev dependencies:
+### run the full test to check coverage
+```sh
+pytest --cov=src tests/
+```
+### run linting to check code quality and style
+```sh
+pylint src/
+```
 ---
 
 ## Generated Output
