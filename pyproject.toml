@@ -19,10 +19,15 @@ dependencies = [
 dev = [
     "pytest",
     "pytest-cov",
+    "pylint>=2.15.0", 
 ]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["piwe_bem_mouxtin_ae*", "piwe_bem_mouxtin_ae.*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,6 +1,8 @@
 # files to ignore in this repo
 
 outputs/
+.venv/
+.coverage/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
