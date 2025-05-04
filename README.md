@@ -168,7 +168,7 @@ pylint src/
 ```
 ---
 
-## Generated Output
+## Generated Output (view in your local Markdown preview)
 
 The package produces 8 figures demonstrating each core capability:
 
