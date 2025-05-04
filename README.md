@@ -79,7 +79,7 @@ Sit back, relax and wait for approximately 2 minutes, no need to worry, in my vi
 
 ### **4. Run the package**
 ```sh
-   python examples/main.py
+python examples/main.py
 ```
    This will load inputs/, run the BEM solver and save figures to outputs/.
 
