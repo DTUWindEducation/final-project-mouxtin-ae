@@ -87,27 +87,45 @@ Sit back, relax and wait for approximately 1 minute, no need to worry, in my vil
 
 ## **Project Structure**
 
+The package uses a simple, layered architecture: a **data-loading** layer (data_loader.py, turbine_classes.py) parses all inputs into NumPy arrays and turbine objects; a **computation** layer (`bem_solver.py`, performance_curves.py) runs the BEM algorithm and assembles thrust, torque, and power curves; and a **visualization** layer (plots.py, airfoil_tools.py) produces all of the figures. An examples/main.py script ties these layers together in an end-to-end demo, and a parallel tests/ suite verifies each module with > 80 % coverage.
+
 ```text
 final-project-mouxtin-ae/
-├── inputs/                      # Provided turbine geometry, polars & strategy
-├── outputs/                     # Generated performance figures (not pushed)
+├── COLLABORATION.md             # team collaboration plan
+├── LICENSE                      # project license
+├── README.md                    # you are here
+├── examples/                   
+│   ├── LEANWIND_8MW_164_...
+│   └── main.py                  # executable example
+├── inputs/                      # provided turbine geometry, polars & strategy
+│   └── IEA-15-240-RWT/
+│       ├── Airfoils/            # airfoil coordinate & polar files
+│       ├── IEA-15-240-...
+│       ├── IEA_15MW_...
+│       └── rotor_diagram.jpeg
+├── outputs/                     # generated plots
+│   ├── airfoil_shapes.jpg
+│   ├── cd_vs_aoa.jpg
+│   ├── cl_cd_vs_alpha_all.jpg
+│   ├── cl_vs_aoa.jpg
+│   ├── cm_vs_aoa.jpg
+│   ├── operational_strategy.jpg
+│   ├── power_thrust_curves.jpg
+│   └── spanwise_induction.jpg
+├── pyproject.toml               # project metadata & dependencies
 ├── src/
-│   └── bem_turbine/             # Installable BEM package
-│       ├── data_loader.py       # parsing blade & strategy files
-│       ├── airfoil.py           # airfoil shape & polar interpolation
-│       ├── solver.py            # BEM induction‐factor solver
-│       ├── performance.py       # power, thrust, torque computations
-│       ├── plotting.py          # all plotting utilities
-│       └── utils.py             # misc helper functions
-├── tests/                       # pytest scripts, mirroring src modules
-├── examples/
-│   └── main.py                  # demo script that runs in <10 min
-├── docs/                        # static diagrams and reference images
-├── .gitignore
-├── LICENSE
-├── Collaboration.md             # team collaboration plan
-├── README.md                    # this document
-└── pyproject.toml               # project metadata & dependencies
+│   └── piwe_bem_mouxtin_ae/     # installable BEM package by our great team
+│       ├── _init_.py
+│       ├── airfoil_tools.py
+│       ├── bem_solver.py
+│       ├── data_loader.py
+│       ├── performance_curves.py
+│       ├── plots.py
+│       └── turbine_classes.py
+├── tests/                       # pytest scripts
+│   └── test_bem.py
+└── .gitignore                   # files and folders to ignore
+
 ```
 
 
