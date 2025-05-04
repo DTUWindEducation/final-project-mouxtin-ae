@@ -74,7 +74,7 @@ pip install --upgrade pip
 ```sh
 pip install -e .[dev]
 ```
-Sit back, relax and wait for approximately 1 minute, no need to worry, in my village they say ''The good thing, takes time''.
+Sit back, relax and wait for approximately 2 minutes, no need to worry, in my village they say ''The good thing, takes time''.
    
 
 ### **4. Run the package**
@@ -86,8 +86,7 @@ Sit back, relax and wait for approximately 1 minute, no need to worry, in my vil
 ---
 
 ## **Project Structure**
-
-The package uses a simple, layered architecture: a **data-loading** layer (data_loader.py, turbine_classes.py) parses all inputs into NumPy arrays and turbine objects; a **computation** layer (`bem_solver.py`, performance_curves.py) runs the BEM algorithm and assembles thrust, torque, and power curves; and a **visualization** layer (plots.py, airfoil_tools.py) produces all of the figures. An examples/main.py script ties these layers together in an end-to-end demo, and a parallel tests/ suite verifies each module with > 80 % coverage.
+The package uses a simple, layered architecture: a **data-loading** layer (`data_loader.py`, `turbine_classes.py`), a **computation** layer (`bem_solver.py`, `performance_curves.py`) runs the BEM algorithm and assembles thrust, torque, and power curves.A **visualization** layer (`plots.py`, `airfoil_tools.py`) produces all of the figures. An `examples/main.py` script ties these layers together and a parallel `tests/` suite verifies the modules with > 80 % coverage.
 
 ```text
 final-project-mouxtin-ae/
@@ -125,89 +124,106 @@ final-project-mouxtin-ae/
 ├── tests/                       # pytest scripts
 │   └── test_bem.py
 └── .gitignore                   # files and folders to ignore
-
 ```
+---
+## Classes
 
+### `src/piwe_bem_mouxtin_ae/turbine_classes.py`
+
+#### GeneralWindTurbine
+Models a wind turbine using a theoretical “cubic” power curve.
+
+**Constructor**  
+`GeneralWindTurbine(rotor_diameter, hub_height, rated_power, v_in, v_rated, v_out, name=None)`
+
+**Methods**  
+- `get_power(wind_speed)` → returns power (kW) for scalar or array inputs  
+- `plot_power_curve(v_range=None, label=None)` → returns a Matplotlib figure
 
 ---
 
-## Installation
+#### WindTurbine
+Subclass of `GeneralWindTurbine` that uses actual power-curve data via interpolation.
 
-Ensure Python 3.10+ is installed. Then:
-bash
-pip install -e .
+**Constructor**  
+`WindTurbine(rotor_diameter, hub_height, rated_power, v_in, v_rated, v_out, power_curve_data, name=None)`
 
-This installs the bem_turbine package in editable mode and pulls in any requirements listed in pyproject.toml.
-
----
-
-## Architecture Overview
-
-We follow the 4+1 view model in miniature:
-
-- *Logical (Functionality):* The bem_turbine package provides classes/functions to load input data, solve the BEM equations, and post-process results.
-- *Development (Module Structure):* All code resides under src/bem_turbine with one module per major responsibility.
-- *Process (Performance):* The solver vectorizes operations over blade elements; plotting routines produce figures in under 10 min on a typical laptop.
-- *Physical (Deployment):* Installation via pip install -e .; no external data files are needed beyond inputs/.
-- *Use‐Case (Examples):* examples/main.py demonstrates a full run from inputs → outputs.
-
-A UML‐style block diagram (in docs/figures/rotor_diagram.jpeg) illustrates the data flow: inputs → BEM solver → performance curves → plots.
+**Methods**  
+- `get_power(wind_speed)` → interpolated power values
 
 ---
-
-## Functional Requirements
-
-The package implements all mandated functions:
-
-1. *Data loading & parsing* (data_loader.py).
-2. *Airfoil shape plotting* (plotting.py: plot_all_airfoil_shapes).
-3. *Lift/drag vs span & angle-of-attack* (plotting.py: plot_cl_cd_vs_r_alpha).
-4. *Induction factors a, a′ vs span* (solver.py: solve_bem).
-5. *Power, thrust, torque vs wind speed* (performance.py: compute_power_thrust_curves).
-6. *Operational strategy plotting* (plotting.py: plot_operational_strategy).
-7. *Reference vs computed performance curves* (plotting.py: plot_performance_curves).
-
-Additional helper functions in utils.py extend the feature set.
-
----
-
-## Examples
-
-examples/main.py illustrates:
-
-- Loading blade geometry & polars.
-- Solving BEM over the given wind‐speed array.
-- Plotting and saving:
-  - Airfoil shapes.
-  - Cl/Cd vs α for sample stations.
-  - Spanwise induction factors.
-  - Power, thrust, torque curves vs wind speed.
-  - Operational strategy (pitch & RPM).
-
-Figures are written to outputs/ as both PNG and PDF.
-
----
-
 ## Testing & Quality
 
-- *Tests:* Each module in src/bem_turbine has a corresponding test in tests/, ensuring ≥ 80% coverage (pytest --cov=src tests/).
-- *Linting:* Pylint score maintained at ≥ 8.0 (pylint src/bem_turbine).
-- *CI:* GitHub Actions runs tests and style checks on every PR.
-
+- **Tests:** 26 tests executed, all passed. Code coverage is **89%**, exceeding the 80% requirement (`pytest --cov=src tests/`).
+- **Linting:** `pylint src/` reports a score of **9.19/10**, well above the 8.0 threshold.
 ---
 
+## Generated Output
+
+The package produces 8 figures demonstrating each core capability:
+
+1. **Blade & Airfoil Data**  
+   - **Data loading & parsing** (`src/piwe_bem_mouxtin_ae/data_loader.py`):  
+     - `load_blade_geometry`  
+     - `load_airfoil_polars`  
+     - `load_airfoil_coordinates`  
+     - `load_operational_strategy`
+
+2. **Airfoil Shapes** (`src/piwe_bem_mouxtin_ae/plots.py`)  
+   - `plot_coords_data(base_path, output_dir, …)`  
+   <div align="center">
+     <img src="outputs/airfoil_shapes.jpg" width="50%" />
+   </div>
+
+3. **Airfoil Polars** (`src/piwe_bem_mouxtin_ae/plots.py`)  
+   - **`plot_polar_data(...)`** generates three plots:
+     <table width="100%">
+       <tr>
+         <td align="center">
+           <img src="outputs/cl_vs_aoa.jpg" width="100%" /><br>
+           **Cl vs AoA**
+         </td>
+         <td align="center">
+           <img src="outputs/cd_vs_aoa.jpg" width="100%" /><br>
+           **Cd vs AoA**
+         </td>
+       </tr>
+       <tr>
+         <td colspan="2" align="center">
+           <img src="outputs/cm_vs_aoa.jpg" width="50%" /><br>
+           **Cm vs AoA**
+         </td>
+       </tr>
+     </table>
+
+   - **`plot_cl_cd_vs_alpha_all(...)`**  
+     <div align="center">
+       <img src="outputs/cl_cd_vs_alpha_all.jpg" width="60%" /><br>
+       **Cl & Cd vs α for all airfoils**
+     </div>
+
+4. **Induction Factors** (`src/piwe_bem_mouxtin_ae/performance_curves.py`)  
+   - `plot_spanwise_variables(r, a, a_prime, v0, rpm)`  
+   <div align="center">
+     <img src="outputs/spanwise_induction.jpg" width="50%" />
+   </div>
+
+5. **Operational Strategy** (`src/piwe_bem_mouxtin_ae/performance_curves.py`)  
+   - `plot_operational_strategy(v0_array, pitch_array, rpm_array)`  
+   <div align="center">
+     <img src="outputs/operational_strategy.jpg" width="40%" />
+   </div>
+
+6. **Performance Curves** (`src/piwe_bem_mouxtin_ae/performance_curves.py`)  
+   - `plot_performance_curves(v0_array, power_curve, thrust_curve, power_ref, thrust_ref)`  
+   <div align="center">
+     <img src="outputs/power_thrust_curves.jpg" width="60%" />
+   </div>
+
+---
 ## Team Collaboration
 
 See [Collaboration.md](Collaboration.md) for detailed roles, workflow, and communication channels.
 
 ---
 
-## References & Further Reading
-
-- Hansen, M.O.L. (2015). Aerodynamics of Wind Turbines, 3rd ed.
-- IEC 61400‑1: Wind turbine design requirements.
-- Gaertner et al. (2020). IEA 15 MW offshore reference turbine, NREL/TP‑5000.
-
-Additional resources and background are listed in the course slides and README templates under docs.
-
----
